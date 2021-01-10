@@ -1,0 +1,32 @@
+{% extends "base.jinja2" %}
+{% block requirements %}
+    <script src="/static/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/ace/theme-chaos.js" type="text/javascript" charset="utf-8"></script>
+    <script defer src="/static/editorconfig.js"></script>
+    <script>
+        // Tags
+        window.tags = {
+            guild_id: "{{ guild_id }}",
+            bot_id: "{{ bot_id }}"
+        }
+    </script>
+    <style>
+        #editor {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+        .savebutton {
+            position: absolute;
+            z-index: 1000;
+            bottom: 0;
+            right: 0;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div id="editor">{{ config }}</div>
+    <button class="savebutton" onclick="updateConfig()">Save</button>
+{% endblock %}
