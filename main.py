@@ -53,6 +53,7 @@ def render_dashboard(guild_id, bot_id):
     error, status_code = verify_access(guild_id, bot_id)
     if error is not None:
         return error, status_code
+    current_config = config_table.find_one({"guild_id": guild_id, "bot_id": bot_id})
     return render_template("bot_config.jinja2", guild_id=guild_id, bot_id=bot_id, config=current_config["raw"])
 
 
