@@ -35,7 +35,7 @@ def has_config_access(guild_id, bot_id):
             if bool(admin_tokens_table.find_one({"token": token})):
                 return True
         return False
-    access = config_access_table.find_one({"guild_id": guild_id, "user_id": session["user_id"]})
+    access = config_access_table.find_one({"guild_id": guild_id, "user_id": session["user_id"], "bot_id": bot_id})
     return bool(access)
 
 
