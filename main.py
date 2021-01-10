@@ -39,23 +39,28 @@ def has_config_access(guild_id, bot_id):
     return bool(access)
 
 
-@app.route("/guilds/<int:guild_id>/bot/<int:bot_id>")
-def render_dashboard(guild_id, bot_id):
+def verify_access(guild_id, bot_id):
     current_config = config_table.find_one({"guild_id": guild_id, "bot_id": bot_id})
     if current_config is None:
         return "Not found", 404
     if not has_config_access(guild_id, bot_id):
         return "No access", 401
+    return None, 200
+
+
+@app.route("/guilds/<int:guild_id>/bot/<int:bot_id>")
+def render_dashboard(guild_id, bot_id):
+    error, status_code = verify_access(guild_id, bot_id)
+    if error is not None:
+        return error, status_code
     return render_template("bot_config.jinja2", guild_id=guild_id, bot_id=bot_id, config=current_config["raw"])
 
 
 @app.route("/guilds/<int:guild_id>/bot/<int:bot_id>/update", methods=["POST"])
 def update_config(guild_id, bot_id):
-    current_config = config_table.find_one({"guild_id": guild_id, "bot_id": bot_id})
-    if current_config is None:
-        return "Not found", 404
-    if not has_config_access(guild_id, bot_id):
-        return "No access", 401
+    error, status_code = verify_access(guild_id, bot_id)
+    if error is not None:
+        return error, status_code
     try:
         content = request.data.decode("utf-8")
         config = load(content, Loader=CFullLoader)
@@ -68,23 +73,33 @@ def update_config(guild_id, bot_id):
 @app.route("/api/<int:guild_id>/bot/<int:bot_id>/get_config")
 def api_get_config(guild_id, bot_id):
     current_config = config_table.find_one({"guild_id": guild_id, "bot_id": bot_id})
-    if current_config is None:
-        return "Not found", 404
-    if not has_config_access(guild_id, bot_id):
-        return "No access", 401
+    error, status_code = verify_access(guild_id, bot_id)
+    if error is not None:
+        return error, status_code
     return current_config["config"]
 
 
 @app.route("/api/<int:guild_id>/bot/<int:bot_id>/grant_access")
 def api_grant_access(guild_id, bot_id):
-    current_config = config_table.find_one({"guild_id": guild_id, "bot_id": bot_id})
+    error, status_code = verify_access(guild_id, bot_id)
+    if error is not None:
+        return error, status_code
     user_id = int(request.data.decode("utf-8"))
-    if current_config is None:
-        return "Not found", 404
-    if not has_config_access(guild_id, bot_id):
-        return "No access", 401
-    if config_access_table.find_one({"guild_id": guild_id, "user_id": user_id}):
+    if config_access_table.find_one({"guild_id": guild_id, "user_id": user_id, "bot_id": bot_id}):
         return "Already has access", 400
+    config_access_table.insert_one({"guild_id": guild_id, "user_id": user_id, "bot_id": bot_id})
+    return "Ok"
+
+
+@app.route("/api/<int:guild_id>/bot/<int:bot_id>/revoke_access")
+def api_revoke_access(guild_id, bot_id):
+    error, status_code = verify_access(guild_id, bot_id)
+    if error is not None:
+        return error, status_code
+    user_id = int(request.data.decode("utf-8"))
+    if not config_access_table.find_one({"guild_id": guild_id, "user_id": user_id, "bot_id": bot_id}):
+        return "Doesn't have any access", 400
+    config_access_table.delete_one({"guild_id": guild_id, "user_id": user_id, "bot_id": bot_id})
     return "Ok"
 
 
