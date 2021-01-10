@@ -65,6 +65,17 @@ def update_config(guild_id, bot_id):
     return "Ok"
 
 
+@app.route("/api/<int:guild_id>/bot/<int:bot_id>/get_config")
+def api_get_config(guild_id, bot_id):
+    current_config = config_table.find_one({"guild_id": guild_id, "bot_id": bot_id})
+    if current_config is None:
+        return "Not found", 404
+    if not has_config_access(guild_id, bot_id):
+        return "No access", 401
+    return current_config["config"]
+
+
+
 @app.route("/login")
 def login():
     return discord.create_session(scope=["identify"], prompt=False)
