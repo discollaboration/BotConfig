@@ -21,6 +21,10 @@ discord = DiscordOAuth2Session(app,
                                redirect_uri=env["DISCORD_REDIRECT_URL"])
 
 
+def is_logged_in():
+    return "user_id" in session.keys()
+
+
 def has_config_access(guild_id, bot_id):
     if "user_id" not in session.keys():
         if "Authorization" not in request.cookies.keys():
@@ -104,9 +108,22 @@ def api_revoke_access(guild_id, bot_id):
     return "Ok"
 
 
+@app.route("/guilds")
+def render_guilds():
+    if not is_logged_in():
+        return redirect("/login")
+    guilds = discord.fetch_guilds()
+    config_guilds = []
+    for guild in guilds:
+        if config_access_table.find_one({"user_id": session["user_id"], "guild_id": guild.id}):
+            config_guilds.append(guild)
+
+    return render_template("guild_selection.jinja2", guilds=config_guilds)
+
+
 @app.route("/login")
 def login():
-    return discord.create_session(scope=["identify"], prompt=False)
+    return discord.create_session(scope=["identify", "guilds"], prompt=False)
 
 
 @app.route("/login/callback")

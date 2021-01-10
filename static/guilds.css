@@ -1,0 +1,29 @@
+body {
+    background-color: #464e59;
+}
+
+.guild-selection {
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+}
+.guild-display {
+    background-color: #23272A;
+    border: #000 solid;
+    vertical-align: top;
+    display: inline-block;
+    height: 200px;
+    width: 200px;
+}
+.guild-name-container {
+    text-align: center;
+}
+.guild-name {
+    color: #FFFFFF;
+    font-size: 20px;
+    text-align: center;
+}
+.circle {
+    width: 100%;
+    height: 90%;
+}

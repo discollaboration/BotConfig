@@ -1,0 +1,16 @@
+{% extends "base.jinja2" %}
+{% block requirements %}
+    <link rel="stylesheet" href="/static/guilds.css">
+{% endblock %}
+{% block content %}
+    <div class="guild-selection">
+        {% for guild in guilds %}
+            <div class="guild-display" onclick="location.href = '/guilds/{{ guild.id }}'">
+                <img class="circle" src="{{ guild.icon_url }}" alt="No icon????">
+                <div class="guild-name-container">
+                    <span class="guild-name">{{ guild.name }}</span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
