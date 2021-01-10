@@ -75,6 +75,18 @@ def api_get_config(guild_id, bot_id):
     return current_config["config"]
 
 
+@app.route("/api/<int:guild_id>/bot/<int:bot_id>/grant_access")
+def api_grant_access(guild_id, bot_id):
+    current_config = config_table.find_one({"guild_id": guild_id, "bot_id": bot_id})
+    user_id = int(request.data.decode("utf-8"))
+    if current_config is None:
+        return "Not found", 404
+    if not has_config_access(guild_id, bot_id):
+        return "No access", 401
+    if config_access_table.find_one({"guild_id": guild_id, "user_id": user_id}):
+        return "Already has access", 400
+    return "Ok"
+
 
 @app.route("/login")
 def login():
