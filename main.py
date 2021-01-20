@@ -146,3 +146,8 @@ def login_callback():
     session["user_id"] = user.id
     session["user_name"] = user.username
     return redirect("/")
+
+
+@app.route("/")
+def gtfo_to_guilds():
+    return redirect("/guilds")
