@@ -7,7 +7,7 @@ from yaml import load, CFullLoader
 app = Flask(__name__)
 app.config["SECRET_KEY"] = env["SECRET_KEY"].encode("utf-8")
 
-mongo = MongoClient()
+mongo = MongoClient(env["MONGO_URI"])
 database = mongo["BotConfig"]
 config_table = database["config"]
 config_access_table = database["user_access"]

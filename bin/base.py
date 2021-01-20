@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from os import environ as env
 
-client = MongoClient()
+client = MongoClient(env["MONGO_URI"])
 database = client["BotConfig"]
