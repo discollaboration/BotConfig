@@ -34,7 +34,7 @@ def has_config_access(guild_id, bot_id):
         token_type = splitted[0].lower()
         token = splitted[1]
         if token_type == "bot":
-            if bool(bot_tokens_table.find_one({"bot_id": bot_id, "token": token})):
+            if bool(bot_tokens_table.find_one({"_id": bot_id, "token": token})):
                 return True
         elif token_type == "admin":
             if bool(admin_tokens_table.find_one({"token": token})):
