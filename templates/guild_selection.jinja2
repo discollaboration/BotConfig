@@ -5,7 +5,7 @@
 {% block content %}
     <div class="guild-selection">
         {% for guild in guilds %}
-            <div class="guild-display" onclick="location.href = '/guilds/{{ guild.id }}?size=2048'">
+            <div class="guild-display" onclick="location.href = '/guilds/{{ guild.id }}'">
                 <img class="circle" src="{{ guild.icon_url }}" alt="No icon????">
                 <div class="guild-name-container">
                     <span class="guild-name">{{ guild.name }}</span>

@@ -1,0 +1,23 @@
+{% extends "base.jinja2" %}
+{% block requirements %}
+    <link rel="stylesheet" href="/static/bot-selector.css">
+{% endblock %}
+{% block content %}
+    <div class="bot-selection">
+        {% for bot in bots %}
+            {% set bot_data = bot_data_table.find_one({"_id": bot["bot_id"]}) %}
+            <div class="bot-display" onclick="location.href = '/guilds/{{ guild_id }}/bot/{{ bot["bot_id"] }}'">
+                <img class="circle" src="{{ bot_data["icon"] }}" alt="No icon????">
+                <div class="bot-name-container">
+                    <span class="bot-name">
+                        {% if bot_data != None %}
+                            {{ bot_data["name"] }}
+                        {% else %}
+                            Unknown bot name!
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -13,6 +13,7 @@ config_table = database["config"]
 config_access_table = database["user_access"]
 bot_tokens_table = database["bot_tokens"]
 admin_tokens_table = database["admin_tokens"]
+bot_data_table = database["bot_data"]
 
 env["OAUTHLIB_INSECURE_TRANSPORT"] = "true"
 discord = DiscordOAuth2Session(app,
@@ -119,6 +120,18 @@ def render_guilds():
             config_guilds.append(guild)
 
     return render_template("guild_selection.jinja2", guilds=config_guilds)
+
+
+@app.route("/guilds/<int:guild_id>")
+def render_bots_in_guild(guild_id):
+    if not is_logged_in():
+        return redirect("/login")
+    bots = list(config_access_table.find({"user_id": session["user_id"], "guild_id": guild_id}))
+    if len(bots) == 0:
+        return redirect("/guilds")
+    if len(bots) == 1:
+        return redirect(f"/guilds/{guild_id}/bot/{bots[0]['bot_id']}")
+    return render_template("bot_selection.jinja2", bots=bots, bot_data_table=bot_data_table, guild_id=guild_id)
 
 
 @app.route("/login")
