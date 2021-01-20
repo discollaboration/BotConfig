@@ -130,7 +130,8 @@ def render_bots_in_guild(guild_id):
     if len(bots) == 0:
         return redirect("/guilds")
     if len(bots) == 1:
-        return redirect(f"/guilds/{guild_id}/bot/{bots[0]['bot_id']}")
+        return render_dashboard(guild_id, bots[0]["bot_id"])
+        # return redirect(f"/guilds/{guild_id}/bot/{bots[0]['bot_id']}")
     return render_template("bot_selection.jinja2", bots=bots, bot_data_table=bot_data_table, guild_id=guild_id)
 
 
