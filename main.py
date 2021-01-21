@@ -116,12 +116,17 @@ def api_revoke_access(guild_id, bot_id):
 def render_guilds():
     if not is_logged_in():
         return redirect("/login")
-    guilds = discord.fetch_guilds()
+    if "guilds" not in session.keys():
+        guilds = discord.fetch_guilds()
+        session["guilds"] = [{"id": guild.id, "name": guild.name, "icon_url": guild.icon_url} for guild in guilds]
+        guilds = session["guilds"]
+    else:
+        guilds = session["guilds"]
+
     config_guilds = []
     for guild in guilds:
-        if config_access_table.find_one({"user_id": session["user_id"], "guild_id": guild.id}):
+        if config_access_table.find_one({"user_id": session["user_id"], "guild_id": guild["id"]}):
             config_guilds.append(guild)
-
     return render_template("guild_selection.jinja2", guilds=config_guilds)
 
 
