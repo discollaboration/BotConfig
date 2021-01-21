@@ -47,7 +47,10 @@ def has_config_access(guild_id, bot_id):
 def verify_access(guild_id, bot_id):
     current_config = config_table.find_one({"guild_id": guild_id, "bot_id": bot_id})
     if current_config is None:
-        return "Not found", 404
+        if not bot_data_table.find_one({"_id": bot_id}):
+            return "Not found", 404
+        config_table.insert_one({"guild_id": guild_id, "bot_id": bot_id, "config": {}, "raw": ""})
+        return verify_access(guild_id, bot_id)
     if not has_config_access(guild_id, bot_id):
         return "No access", 401
     return None, 200
