@@ -28,9 +28,9 @@ def is_logged_in():
 
 def has_config_access(guild_id, bot_id):
     if "user_id" not in session.keys():
-        if "Authorization" not in request.cookies.keys():
+        if "Authorization" not in request.headers.keys():
             return False
-        splitted = request.cookies["Authorization"].split(" ")
+        splitted = request.headers["Authorization"].split(" ")
         token_type = splitted[0].lower()
         token = splitted[1]
         if token_type == "bot":
@@ -81,10 +81,10 @@ def update_config(guild_id, bot_id):
 
 @app.route("/api/<int:guild_id>/bot/<int:bot_id>/get_config")
 def api_get_config(guild_id, bot_id):
-    current_config = config_table.find_one({"guild_id": guild_id, "bot_id": bot_id})
     error, status_code = verify_access(guild_id, bot_id)
     if error is not None:
         return error, status_code
+    current_config = config_table.find_one({"guild_id": guild_id, "bot_id": bot_id})
     return current_config["config"]
 
 
@@ -154,3 +154,7 @@ def login_callback():
 @app.route("/")
 def gtfo_to_guilds():
     return redirect("/guilds")
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
