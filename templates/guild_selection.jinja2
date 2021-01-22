@@ -3,14 +3,21 @@
     <link rel="stylesheet" href="/static/guilds.css">
 {% endblock %}
 {% block content %}
-    <div class="guild-selection">
-        {% for guild in guilds %}
-            <div class="guild-display" onclick="location.href = '/guilds/{{ guild.id }}'">
-                <img class="circle" src="{{ guild.icon_url }}" alt="No icon????">
-                <div class="guild-name-container">
-                    <span class="guild-name">{{ guild.name }}</span>
+
+    {% if guilds.__len__() %}
+        <div class="guild-selection">
+            {% for guild in guilds %}
+                <div class="guild-display" onclick="location.href = '/guilds/{{ guild.id }}'">
+                    <img class="circle" src="{{ guild.icon_url }}" alt="No icon????">
+                    <div class="guild-name-container">
+                        <span class="guild-name">{{ guild.name }}</span>
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <h1>No bots with BotConfig found?</h1>
+        <h2>Try inviting some with BotConfig support</h2>
+    {% endif %}
+
 {% endblock %}
