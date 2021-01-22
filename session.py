@@ -30,12 +30,13 @@ class SessionManager:
 
     def create_new_session(self):
         token = "".join(choices(ascii_letters, k=20))
-        self.redis.set("session:%s" % token, {}, ex=60 * 60)  # Expire after 1 hour
+        self.redis.set("session:%s" % token, "{}", ex=60 * 60)  # Expire after 1 hour
+        session["SUPER_SESSION_ID"] = token
 
     def __setitem__(self, key, value):
         data = self.get()
         data[key] = value
-        self.set(value)
+        self.set(data)
 
     def __getitem__(self, item):
         data = self.get()
