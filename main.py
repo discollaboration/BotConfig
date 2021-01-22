@@ -1,10 +1,12 @@
-from flask import Flask, render_template, session, request, redirect
+from flask import Flask, render_template, request, redirect
 from pymongo import MongoClient
 from flask_discord import DiscordOAuth2Session
 from os import environ as env
 from yaml import load, CFullLoader
+from session import SessionManager
 
 app = Flask(__name__)
+session = SessionManager()
 app.config["SECRET_KEY"] = env["SECRET_KEY"].encode("utf-8")
 
 mongo = MongoClient(env["MONGO_URI"])
