@@ -90,7 +90,7 @@ def api_get_config(guild_id, bot_id):
     return current_config["config"]
 
 
-@app.route("/api/<int:guild_id>/bot/<int:bot_id>/grant_access")
+@app.route("/api/<int:guild_id>/bot/<int:bot_id>/grant_access", methods=["POST"])
 def api_grant_access(guild_id, bot_id):
     error, status_code = verify_access(guild_id, bot_id)
     if error is not None:
@@ -102,7 +102,7 @@ def api_grant_access(guild_id, bot_id):
     return "Ok"
 
 
-@app.route("/api/<int:guild_id>/bot/<int:bot_id>/revoke_access")
+@app.route("/api/<int:guild_id>/bot/<int:bot_id>/revoke_access", methods=["POST"])
 def api_revoke_access(guild_id, bot_id):
     error, status_code = verify_access(guild_id, bot_id)
     if error is not None:
